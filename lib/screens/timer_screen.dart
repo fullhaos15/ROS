@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/workout.dart';
+import '../services/history_service.dart';
 import '../theme.dart';
 
 class TimerScreen extends StatefulWidget {
@@ -31,6 +32,16 @@ class _TimerScreenState extends State<TimerScreen> {
       });
     }
     setState(() => _running = !_running);
+  }
+
+  Future<void> _finish() async {
+    _timer?.cancel();
+    final messenger = ScaffoldMessenger.of(context);
+    final nav = Navigator.of(context);
+    await HistoryService.add(widget.workout, _total - _left);
+    messenger
+        .showSnackBar(const SnackBar(content: Text('Тренировка сохранена')));
+    nav.pop();
   }
 
   @override
@@ -77,6 +88,11 @@ class _TimerScreenState extends State<TimerScreen> {
               onPressed: _toggle,
               icon: Icon(_running ? Icons.pause : Icons.play_arrow),
               label: Text(_running ? 'Пауза' : 'Старт'),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: _finish,
+              child: const Text('Завершить и сохранить'),
             ),
           ],
         ),

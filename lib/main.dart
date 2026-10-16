@@ -1,12 +1,17 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'firebase_options.dart';
 import 'models/workout.dart';
-import 'screens/main_shell.dart';
+import 'screens/auth_gate.dart';
 import 'screens/workout_detail_screen.dart';
 import 'theme.dart';
 
-void main() => runApp(const FitLifeApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(const FitLifeApp());
+}
 
-/// Урок «Структура приложения» + «Stateless виджеты».
 class FitLifeApp extends StatelessWidget {
   const FitLifeApp({super.key});
 
@@ -17,11 +22,10 @@ class FitLifeApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
       initialRoute: '/',
-      // Урок «Передача параметров в маршруте» — onGenerateRoute.
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
-            return MaterialPageRoute(builder: (_) => const MainShell());
+            return MaterialPageRoute(builder: (_) => const AuthGate());
           case '/detail':
             final workout = settings.arguments as Workout;
             return MaterialPageRoute(

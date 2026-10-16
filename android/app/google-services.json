@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "813360908136",
+    "project_id": "ros1-feaad",
+    "storage_bucket": "ros1-feaad.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813360908136:android:b5f19b54034fa6f1b878dd",
+        "android_client_info": {
+          "package_name": "com.example.fitlife"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSCQClWQZZxGtWDjF0ahiBve_K4e5TqEk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

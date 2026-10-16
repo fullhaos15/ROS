@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../services/history_service.dart';
 import '../theme.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -16,12 +19,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Профиль', style: Theme.of(context).textTheme.headlineMedium),
+          Row(
+            children: [
+              Expanded(
+                child: Text('Профиль',
+                    style: Theme.of(context).textTheme.headlineMedium),
+              ),
+              IconButton(
+                tooltip: 'Выйти',
+                icon: const Icon(Icons.logout),
+                onPressed: () => FirebaseAuth.instance.signOut(),
+              ),
+            ],
+          ),
+          Text(FirebaseAuth.instance.currentUser?.email ?? '',
+              style: const TextStyle(color: Colors.black54)),
           const SizedBox(height: 20),
           const Row(
             children: [
@@ -60,12 +77,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 24),
+          const Text('История тренировок',
+              style: TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 8),
+          StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: HistoryService.latest(),
+            builder: (context, snap) {
+              final docs = snap.data?.docs ?? [];
+              if (docs.isEmpty) {
+                return const Text('Пока пусто — завершите первую тренировку');
+              }
+              return Column(
+                children: [
+                  for (final d in docs)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.check_circle,
+                          color: AppColors.primary),
+                      title: Text(d['title'] as String),
+                      subtitle: Text(
+                          '${(d['seconds'] as int) ~/ 60} мин • ${d['kcal']} ккал'),
+                    ),
+                ],
+              );
+            },
+          ),
         ],
       ),
     );
   }
 
-  /// AnimatedContainer для плавной полосы прогресса.
   Widget _progress(double value) {
     return LayoutBuilder(builder: (context, c) {
       return Container(
